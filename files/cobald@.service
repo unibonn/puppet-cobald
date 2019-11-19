@@ -1,0 +1,16 @@
+[Unit]
+Description=COBalD - the Opportunistic Balancing Daemon for %I
+Documentation=https://cobald.readthedocs.io
+After=network.target
+Wants=network-online.target
+After=network-online.target
+
+[Install]
+RequiredBy=multi-user.target
+
+[Service]
+User=cobald
+Group=cobald
+Type=simple
+Environment="X509_USER_PROXY=/var/cache/cobald/proxy"
+ExecStart=/opt/cobald/bin/python3 -m cobald.daemon /etc/cobald/%i/cobald.yml

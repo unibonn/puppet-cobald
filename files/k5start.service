@@ -1,0 +1,15 @@
+[Unit]
+Description=Daemon version of kinit for Kerberos v5
+Documentation=https://www.eyrie.org/~eagle/software/kstart/k5start.html
+After=network.target
+Wants=network-online.target
+After=network-online.target
+
+[Install]
+RequiredBy=multi-user.target
+
+[Service]
+User=cobald
+Group=cobald
+Type=forking
+ExecStart=/usr/bin/k5start -U -f /etc/condor/cobald.keytab -b -K 10 -l 7h -p /var/run/cobald/k5start.pid

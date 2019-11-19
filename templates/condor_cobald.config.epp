@@ -1,0 +1,21 @@
+<%- |
+        Array[String]  $gsi_daemon_dns,
+| -%>
+# See https://htcondor.readthedocs.io/en/latest/admin-manual/configuration-macros.html
+# for a description of the parameters
+
+# For communication with overlay batch system
+SEC_DEFAULT_AUTHENTICATION_METHODS = $(SEC_DEFAULT_AUTHENTICATION_METHODS),GSI
+SEC_CLIENT_AUTHENTICATION_METHODS = $(SEC_CLIENT_AUTHENTICATION_METHODS),GSI
+SEC_READ_AUTHENTICATION_METHODS = $(SEC_READ_AUTHENTICATION_METHODS),GSI
+
+GSI_DAEMON_NAME = <%= $gsi_daemon_dns.join(',') %>
+GSI_DAEMON_PROXY = /var/cache/cobald/proxy
+GSI_DAEMON_TRUSTED_CA_DIR=/etc/grid-security/certificates
+
+# Integrity
+#SEC_DEFAULT_INTEGRITY  = REQUIRED
+#SEC_DAEMON_INTEGRITY = REQUIRED
+#SEC_NEGOTIATOR_INTEGRITY = REQUIRED
+
+#SHADOW_CHECKPROXY_INTERVAL

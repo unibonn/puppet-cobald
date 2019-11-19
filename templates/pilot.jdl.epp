@@ -1,0 +1,28 @@
+<%- |
+        String                $instance_name,
+        String                $vo,
+        Hash[String, String]  $additional_attributes,
+| -%>
+executable              = /usr/local/bin/pilot
+arguments               = <%= $vo %>
+transfer_executable     = false
+output                  = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluster).$$(process).out
+error                   = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluster).$$(process).err
+log                     = /var/log/cobald/<%= $instance_name %>/pilots/cluster.log
+
+JobBatchName            = <%= $vo %>-drone
+
+accounting_group        = <%= $vo %>
+x509userproxy           = /var/cache/cobald/proxy
+
+environment             = ${Environment}
+
+request_cpus            = ${Cores}
+request_memory          = ${Memory}
+request_disk            = ${Disk}
+
+<%- $additional_attributes.each |String $key, String $value| { -%>
+<%= $key %>             = "<%= $value %>"
+<%- } -%>
+
+queue 1

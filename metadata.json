@@ -1,0 +1,29 @@
+{
+  "name": "unibonn-cobald",
+  "version": "0.1.0",
+  "author": "unibonn",
+  "summary": "Puppet module for COBalD/TARDIS based opportunistic resource management",
+  "license": "Apache-2.0",
+  "source": "https://github.com/unibonn/puppet-cobald",
+  "project_page": "https://github.com/unibonn/puppet-cobald",
+  "issues_url": "https://github.com/unibonn/puppet-cobald/issues",
+  "dependencies": [
+    {
+      "name": "voxpopuli/python",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "binford2k/node_encrypt",
+      "version_requirement": ">= 0.4.0"
+    },
+    {
+      "name": "camptocamp/systemd",
+      "version_requirement": ">= 1.0.0"
+    },
+  ],
+  "data_provider": null
+}

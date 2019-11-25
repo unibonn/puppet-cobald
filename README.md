@@ -10,6 +10,41 @@
 
 The module allows to install and configure a [COBalD](https://cobald.readthedocs.io) and [TARDIS](https://cobald-tardis.readthedocs.io) service to manage opportunistic resources.
 
+## Parameters
+
+##### `cobald_version` [`String`]
+COBalD version to be used. Possible values are `undef` = latest PyPI release, `'master'` = Github master branch or the PyPI release number.
+
+##### `tardis_version` [`String`]
+TARDIS version to be used. Possible values are `undef` = latest PyPI release, `'master'` = Github master branch or the PyPI release number.
+
+##### `auth_lbs` [`Optional[Enum['krb5']]`]
+Authentication method used by local batch system (LBS).
+
+##### `filename_cobald_keytab` [`String`]
+COBalD service principal keytab file name (if LBS uses Kerberos authentication).
+
+##### `auth_obs` [`Optional[Enum['gsi']]`]
+Authentication method used by overlay batch system (OBS).
+
+##### `manage_cas` [`Boolean`]
+Should this module manage Certificate Authorities (CAs) (including CRLs).
+
+##### `ca_repo_url` [`String`]
+Repository URL from which to fetch CAs.
+
+##### `ca_packages` [`Array[String]`]
+Array containing names of CA packages.
+
+##### `filename_cobald_robot_key` [`String`]
+COBalD robot key file name (if OBS uses GSI authentication).
+
+##### `filename_cobald_robot_cert` [`String`]
+COBalD robot certificate file name (if OBS uses GSI authentication).
+
+##### `gsi_daemon_dns` [`Array[String]`]
+Array of distringuished names (DNs) to be added to HTCondor variable `GSI_DAEMON_NAME`.
+
 ## Usage
 
 Here is an example how to use this module:

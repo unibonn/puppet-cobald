@@ -140,19 +140,6 @@ class cobald::install {
           selrange => 's0',
           require  => Package['condor'],
         }
-        file { '/etc/condor/config.d/86_cobald.config':
-          ensure   => 'file',
-          content  => epp("${module_name}/condor_cobald.config.epp", { 'gsi_daemon_dns' => $gsi_daemon_dns }),
-          mode     => '0644',
-          owner    => 'root',
-          group    => 'root',
-          seluser  => 'system_u',
-          selrole  => 'object_r',
-          seltype  => 'condor_conf_t',
-          selrange => 's0',
-          require  => [ Package['condor'], Node_encrypt::File['/etc/condor/cobald.keytab'] ],
-          notify   => Exec['/usr/sbin/condor_reconfig'],
-        }
       }
       else {
         fail("${module_name}: authentication method ${auth_lbs} for local batch system used but no keytab file specified.")
@@ -204,6 +191,20 @@ class cobald::install {
       }
       else {
         fail("${module_name}: authentication method ${auth_obs} for overlay batch system used but no robot certificate file specified.")
+      }
+
+      file { '/etc/condor/config.d/86_cobald.config':
+        ensure   => 'file',
+        content  => epp("${module_name}/condor_cobald.config.epp", { 'gsi_daemon_dns' => $gsi_daemon_dns }),
+        mode     => '0644',
+        owner    => 'root',
+        group    => 'root',
+        seluser  => 'system_u',
+        selrole  => 'object_r',
+        seltype  => 'condor_conf_t',
+        selrange => 's0',
+        require  => Package['condor'],
+        notify   => Exec['/usr/sbin/condor_reconfig'],
       }
 
       if $manage_cas {

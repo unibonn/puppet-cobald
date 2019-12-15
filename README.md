@@ -18,11 +18,29 @@ COBalD version to be used. Possible values are `undef` = latest PyPI release, `'
 ##### `tardis_version` [`String`]
 TARDIS version to be used. Possible values are `undef` = latest PyPI release, `'master'` = Github master branch or the PyPI release number.
 
-##### `auth_lbs` [`Optional[Enum['krb5']]`]
+##### `auth_lbs` [`Optional[Enum['krb5', 'ssh']]`]
 Authentication method used by local batch system (LBS).
 
 ##### `filename_cobald_keytab` [`String`]
 COBalD service principal keytab file name (if LBS uses Kerberos authentication).
+
+##### `ssh_hostname` [`String`]
+hostname of host to access LBS (if ssh authentication is used to access LBS)
+
+##### `ssh_username` [`String`]
+user name to be used for ssh access to LBS (if ssh authentication is used to access LBS)
+
+##### `ssh_pubhostkey` [`String`]
+public ssh host key (if ssh authentication is used to access LBS)
+
+##### `ssh_hostkeytype` [`String`]
+encryption type of ssh host key (if ssh authentication is used to access LBS)
+
+##### `ssh_privkey_filename` [`String`]
+file name of ssh private key used to access LBS (if ssh authentication is used to access LBS)
+
+##### `ssh_keytype` [`Enum['dsa', 'ecdsa', 'ed25519', 'rsa']`]
+type of ssh key used to access LBS (if ssh authentication is used to access LBS)
 
 ##### `auth_obs` [`Optional[Enum['gsi']]`]
 Authentication method used by overlay batch system (OBS).
@@ -53,8 +71,15 @@ Here is an example how to use this module:
 class { 'cobald':
   cobald_version             => 'master',
   tardis_version             => 'master',
-  auth_lbs                   => 'krb5',
+#  auth_lbs                   => ['krb5', 'ssh'],
+  auth_lbs                   => ['krb5'],
   filename_cobald_keytab     => "${module_name}/cobald/cobald-cobald.mytier3.edu.keytab",
+#  ssh_hostname               => 'myremotetier3.edu',
+#  ssh_username               => 'cobald',
+#  ssh_pubhostkey             => 'SomeLongStringOfGibberish',
+#  ssh_hostkeytype            => 'ecdsa-sha2-nistp256',
+#  ssh_privkey_filename       => "${module_name}/cobald/sshkeys/cobald@myremotetier3.edu",
+#  ssh_keytype                => 'ed25519',
   auth_obs                   => 'gsi',
   manage_cas                 => true,
   filename_cobald_robot_key  => "${module_name}/cobald/robotcert/cobald-robot-key.pem",

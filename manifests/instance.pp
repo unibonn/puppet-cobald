@@ -17,8 +17,8 @@ define cobald::instance(
   Enum['present', 'absent']   $ensure                      = 'present',
   Hash                        $cobald_conf                 = undef,
   Hash                        $tardis_conf                 = undef,
-  Array[String]               $supported_vos               = [],
-  Hash[String, String]        $additional_pilot_attributes = {},
+  Array[String]               $supported_vos               = [],         # only needed for HTCondor LBS with local submission
+  Hash[String, String]        $additional_pilot_attributes = {},         # only makes sense for HTCondor LBS with local submission
 ) {
 
   $dir_ensure = $ensure ? {

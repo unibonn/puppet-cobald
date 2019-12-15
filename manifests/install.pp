@@ -19,6 +19,12 @@ class cobald::install {
   $tardis_version             = $cobald::tardis_version
   $auth_lbs                   = $cobald::auth_lbs
   $filename_cobald_keytab     = $cobald::filename_cobald_keytab
+  $ssh_hostname               = $cobald::ssh_hostname
+  $ssh_username               = $cobald::ssh_username
+  $ssh_pubhostkey             = $cobald::ssh_pubhostkey
+  $ssh_hostkeytype            = $cobald::ssh_hostkeytype
+  $ssh_privkey_filename       = $cobald::ssh_privkey_filename
+  $ssh_keytype                = $cobald::ssh_keytype
   $auth_obs                   = $cobald::auth_obs
   $manage_cas                 = $cobald::manage_cas
   $ca_repo_url                = $cobald::ca_repo_url
@@ -89,64 +95,107 @@ class cobald::install {
     }
   )
 
-  # authentication used for local batch system
-  case $auth_lbs {
-    'krb5': {
-      ensure_packages(
-        [
-          # kinit daemon to refresh ticket
-          'kstart',
-        ],
-        {
-          require => Package['epel-release'],
-        }
-      )
-      # ensure run directory exists (used to store k5start pid)
-      file { '/var/run/cobald':
-        ensure   => 'directory',
-        mode     => '0700',
-        owner    => 'cobald',
-        group    => 'cobald',
-        seluser  => 'system_u',
-        selrole  => 'object_r',
-        seltype  => 'var_run_t',
-        selrange => 's0',
-      }
-      # Unit file (changes are handled by systemd module, i. e. it automatically triggers a "systemctl daemon-reload")
-      systemd::unit_file { 'k5start.service':
-          source => "puppet:///modules/${module_name}/k5start.service",
-      }
-      service { 'k5start':
-        ensure  => 'running',
-        # runs as user cobald
-        require => [
-          User['cobald'],
-          Systemd::Unit_file['k5start.service'],
-          Package['kstart'],
-          File['/var/run/cobald'],
-        ],
-      }
-      if $filename_cobald_keytab != undef {
-        # keytab for cobald principal (used by k5start to obtain tickets)
-        node_encrypt::file { '/etc/condor/cobald.keytab':
-          ensure   => 'file',
-          content  => file($filename_cobald_keytab),
-          mode     => '0640',
-          owner    => 'root',
+  $u_auth_lbs = unique($auth_lbs)
+
+  # authentication used to access local batch system
+  $u_auth_lbs.each |Enum['krb5', 'ssh'] $lauth| {
+    case $lauth {
+      'krb5': {
+        ensure_packages(
+          [
+            # kinit daemon to refresh ticket
+            'kstart',
+          ],
+          {
+            require => Package['epel-release'],
+          }
+        )
+        # ensure run directory exists (used to store k5start pid)
+        file { '/var/run/cobald':
+          ensure   => 'directory',
+          mode     => '0700',
+          owner    => 'cobald',
           group    => 'cobald',
           seluser  => 'system_u',
           selrole  => 'object_r',
-          seltype  => 'condor_conf_t',
+          seltype  => 'var_run_t',
           selrange => 's0',
-          require  => Package['condor'],
+        }
+        # Unit file (changes are handled by systemd module, i. e. it automatically triggers a "systemctl daemon-reload")
+        systemd::unit_file { 'k5start.service':
+            source => "puppet:///modules/${module_name}/k5start.service",
+        }
+        service { 'k5start':
+          ensure  => 'running',
+          # runs as user cobald
+          require => [
+            User['cobald'],
+            Systemd::Unit_file['k5start.service'],
+            Package['kstart'],
+            File['/var/run/cobald'],
+          ],
+        }
+        if $filename_cobald_keytab != undef {
+          # keytab for cobald principal (used by k5start to obtain tickets)
+          node_encrypt::file { '/etc/condor/cobald.keytab':
+            ensure   => 'file',
+            content  => file($filename_cobald_keytab),
+            mode     => '0640',
+            owner    => 'root',
+            group    => 'cobald',
+            seluser  => 'system_u',
+            selrole  => 'object_r',
+            seltype  => 'condor_conf_t',
+            selrange => 's0',
+            require  => Package['condor'],
+          }
+        }
+        else {
+          fail("${module_name}: authentication method ${auth_lbs} for local batch system used but no keytab file specified.")
         }
       }
-      else {
-        fail("${module_name}: authentication method ${auth_lbs} for local batch system used but no keytab file specified.")
+      'ssh' : {
+        file { '/var/lib/cobald/.ssh':
+          ensure   => 'directory',
+          mode     => '0700',
+          owner    => 'cobald',
+          group    => 'cobald',
+          seluser  => 'system_u',
+          selrole  => 'object_r',
+          seltype  => 'ssh_home_t',
+          selrange => 's0',
+        }
+        file { '/var/lib/cobald/.ssh/known_hosts':
+          ensure   => 'file',
+          mode     => '0644',
+          owner    => 'cobald',
+          group    => 'cobald',
+          seluser  => 'system_u',
+          selrole  => 'object_r',
+          seltype  => 'ssh_home_t',
+          selrange => 's0',
+        }
+        sshkey { $ssh_hostname:
+          key      => $ssh_pubhostkey,
+          target   => '/var/lib/cobald/.ssh/known_hosts',
+          type     => $ssh_hostkeytype,
+          require  => File['/var/lib/cobald/.ssh'],
+        }
+        node_encrypt::file { "/var/lib/cobald/.ssh/id_${ssh_keytype}":
+          mode     => '0600',
+          owner    => 'cobald',
+          group    => 'cobald',
+          seluser  => 'unconfined_u',
+          selrole  => 'object_r',
+          seltype  => 'ssh_home_t',
+          selrange => 's0',
+          content  => file($ssh_privkey_filename),
+          require  => File['/var/lib/cobald/.ssh'],
+        }
       }
-    }
-    default: {
-      fail("${module_name}: authentication method ${auth_lbs} for local batch system not supported.")
+      default: {
+        fail("${module_name}: authentication method ${auth_lbs} for local batch system not supported.")
+      }
     }
   }
 
@@ -232,6 +281,22 @@ class cobald::install {
           Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
           User['cobald'],
         ],
+      }
+      if member($auth_lbs, 'ssh') {
+	ensure_packages(
+          [
+            'openssh-clients',
+          ]
+        )
+        cron { 'transferproxy':
+          command => "scp /var/cache/cobald/proxy ${ssh_username}@${ssh_hostname}:.",
+          user    => 'cobald',
+          minute  => 1,
+          require => [
+            Cron['refreshproxy'],
+            Package['openssh-clients'],
+          ]
+        }
       }
     }
     default: {

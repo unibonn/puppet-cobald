@@ -8,7 +8,7 @@ arguments               = <%= $vo %>
 transfer_executable     = false
 output                  = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluster).$$(process).out
 error                   = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluster).$$(process).err
-log                     = /var/log/cobald/<%= $instance_name %>/pilots/cluster.log
+log                     = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluster).$$(process).log
 
 JobBatchName            = <%= $vo %>-drone
 

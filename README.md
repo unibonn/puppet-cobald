@@ -228,6 +228,7 @@ cobald::instance { 'mytier3':
   additional_pilot_attributes => {
     '+ContainerOS'  => 'CentOS7_pilot',
   },
+  pilot_logs_keep_time        => '14d',
 }
 ```
 

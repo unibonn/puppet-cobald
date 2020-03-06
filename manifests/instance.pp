@@ -19,6 +19,7 @@ define cobald::instance(
   Hash                        $tardis_conf                 = undef,
   Array[String]               $supported_vos               = [],         # only needed for HTCondor LBS with local submission
   Hash[String, String]        $additional_pilot_attributes = {},         # only makes sense for HTCondor LBS with local submission
+  String                      $pilot_logs_keep_time        = '14d',
 ) {
 
   $dir_ensure = $ensure ? {
@@ -48,6 +49,12 @@ define cobald::instance(
     selrole  => 'object_r',
     seltype  => 'var_log_t',
     selrange => 's0',
+  }
+
+  # Cleanup old pilot logs.
+  systemd::tmpfile { "cobald-${name}-pilot-logs.conf":
+    content => "d /var/log/cobald/${name}/pilots 0755 cobald cobald ${pilot_logs_keep_time}",
+    require => File["/var/log/cobald/${name}/pilots"],
   }
 
   # Ensure directory for drone registry exists.

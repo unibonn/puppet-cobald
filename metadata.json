@@ -23,6 +23,10 @@
     {
       "name": "camptocamp/systemd",
       "version_requirement": ">= 1.0.0"
+    },
+    {
+      "name": "saz/ssh",
+      "version_requirement": ">= 6.0.0"
     }
   ],
   "data_provider": null

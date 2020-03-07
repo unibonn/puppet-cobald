@@ -42,6 +42,9 @@ file name of ssh private key used to access LBS (if ssh authentication is used t
 ##### `ssh_keytype` [`Enum['dsa', 'ecdsa', 'ed25519', 'rsa']`]
 type of ssh key used to access LBS (if ssh authentication is used to access LBS)
 
+##### `multiplex_ssh` [`Boolean`]
+Whether SSH multiplexing should be set up for the `cobald` user to reduce latency and improve reliability.
+
 ##### `auth_obs` [`Optional[Enum['gsi']]`]
 Authentication method used by overlay batch system (OBS).
 

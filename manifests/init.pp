@@ -25,6 +25,7 @@ class cobald(
   String                     $ssh_hostkeytype            = undef,                        # encryption type of ssh host key (if ssh authentication is used to access LBS)
   String                     $ssh_privkey_filename       = undef,                        # file name of ssh private key used to access LBS (if ssh authentication is used to access LBS)
   Enum['dsa', 'ecdsa', 'ed25519', 'rsa'] $ssh_keytype    = undef,                        # type of ssh key used to access LBS (if ssh authentication is used to access LBS)
+  Boolean                    $multiplex_ssh              = true,                         # set up SSH multiplexing for cobald user (reduces latency of SSH logins)
   Optional[Enum['gsi']]      $auth_obs                   = 'gsi',                        # authentication used by overlay batch system
   Boolean                    $manage_cas                 = false,                        # manage CAs (including CRLs)
   String                     $ca_repo_url                = $cobald::params::ca_repo_url, # repository URL from which to fetch CAs

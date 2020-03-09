@@ -45,6 +45,12 @@ type of ssh key used to access LBS (if ssh authentication is used to access LBS)
 ##### `multiplex_ssh` [`Boolean`]
 Whether SSH multiplexing should be set up for the `cobald` user to reduce latency and improve reliability.
 
+##### `ssh_perform_output_cleanup` [`Boolean`]
+Whether to perform cleanup of job output files via SSH to ssh_hostname once per day.
+
+##### `output_cleanup_pattern` [`String`]
+Pattern of files to delete when `ssh_perform_output_cleanup` is enabled.
+
 ##### `auth_obs` [`Optional[Enum['gsi']]`]
 Authentication method used by overlay batch system (OBS).
 

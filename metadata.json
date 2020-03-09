@@ -27,6 +27,10 @@
     {
       "name": "saz/ssh",
       "version_requirement": ">= 6.0.0"
+    },
+    {
+      "name": "puppet/cron",
+      "version_requirement": ">= 2.0.0"
     }
   ],
   "data_provider": null

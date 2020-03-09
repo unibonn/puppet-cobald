@@ -26,6 +26,8 @@ class cobald::install {
   $ssh_privkey_filename       = $cobald::ssh_privkey_filename
   $ssh_keytype                = $cobald::ssh_keytype
   $multiplex_ssh              = $cobald::multiplex_ssh
+  $ssh_perform_output_cleanup = $cobald::ssh_perform_output_cleanup
+  $output_cleanup_pattern     = $cobald::output_cleanup_pattern
   $auth_obs                   = $cobald::auth_obs
   $manage_cas                 = $cobald::manage_cas
   $ca_repo_url                = $cobald::ca_repo_url
@@ -209,6 +211,13 @@ class cobald::install {
               }
             }
           }
+        }
+        cron::daily { 'cobald_cleanup_job_output_via_ssh':
+          ensure  => bool2str($ssh_perform_output_cleanup, 'present', 'absent'),
+          hour    => '3',
+          minute  => fqdn_rand(60, 'cobald_job_cleanup'),
+          user    => 'cobald',
+          command => "ssh ${ssh_username}@${ssh_hostname} \"find ~ -maxdepth 1 -type f -name '${output_cleanup_pattern}' -mtime +10 -delete\"",
         }
       }
       default: {

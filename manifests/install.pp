@@ -297,7 +297,7 @@ class cobald::install {
       # Hourly refresh of proxy with a lifetime of 3 days
       # (make sure that starting jobs always have sufficient proxy lifetime)
       cron::hourly { 'cobald_refreshproxy':
-        command => '/usr/bin/voms-proxy-init -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours 72 -out /var/cache/cobald/proxy',
+        command => '/usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours 72 -out /var/cache/cobald/proxy',
         user    => 'cobald',
         minute  => 0,
         require => [
@@ -316,7 +316,7 @@ class cobald::install {
           ]
         )
         cron::hourly { 'cobald_transferproxy':
-          command => "scp /var/cache/cobald/proxy ${ssh_username}@${ssh_hostname}:.",
+          command => "scp -q /var/cache/cobald/proxy ${ssh_username}@${ssh_hostname}:.",
           user    => 'cobald',
           minute  => 1,
           require => [

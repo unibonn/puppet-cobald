@@ -243,4 +243,4 @@ cobald::instance { 'mytier3':
 
 ## Limitations
 
-This module has only been tested on CentOS 7 so far.
+This module has only been tested on CentOS 7 and CentOS 8 so far.

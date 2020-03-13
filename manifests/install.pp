@@ -322,6 +322,12 @@ class cobald::install {
           User['cobald'],
         ],
       }
+      # Ensure cron has run once.
+      exec { 'cobald_refreshproxy_once':
+        command => Cron::Hourly['cobald_refreshproxy']['command'],
+        user    => Cron::Hourly['cobald_refreshproxy']['user'],
+        creates => '/var/cache/cobald/proxy',
+      }
       if member($auth_lbs, 'ssh') {
 	ensure_packages(
           [
@@ -336,6 +342,12 @@ class cobald::install {
             Cron::Hourly['cobald_refreshproxy'],
             Package['openssh-clients'],
           ]
+        }
+        exec { 'cobald_transferproxy_once':
+          command     => Cron::Hourly['cobald_transferproxy']['command'],
+          user        => Cron::Hourly['cobald_transferproxy']['user'],
+          refreshonly => true,
+          subscribe   => Exec['cobald_refreshproxy_once'],
         }
       }
     }

@@ -78,7 +78,6 @@ class cobald::install {
       "${python_pkg_prefix}-libs",
       "${python_pkg_prefix}-setuptools",
       # These can be used from system instead of being installed by PIP.
-      "${python_pkg_prefix}-typing",
       "${python_pkg_prefix}-PyYAML",
       "${python_pkg_prefix}-attrs",
       "${python_pkg_prefix}-idna",
@@ -96,6 +95,21 @@ class cobald::install {
       require => Package['epel-release'],
     }
   )
+
+  if ($facts['os']['family'] == 'RedHat' and (versioncmp($facts['os']['release']['major'],'7') <= 0)) {
+    # Package not present in EPEL 8 yet.
+    ensure_packages(
+      [
+        "${python_pkg_prefix}-typing",
+      ],
+      {
+        require => Package['epel-release'],
+      }
+    )
+    $redhat_7_deps = [ Package["${python_pkg_prefix}-typing"] ]
+  } else {
+    $redhat_7_deps = [ ]
+  }
 
   $u_auth_lbs = unique($auth_lbs)
 
@@ -354,7 +368,6 @@ class cobald::install {
       Package["${python_pkg_prefix}-libs"],
       Package["${python_pkg_prefix}-setuptools"],
       # For COBalD
-      Package["${python_pkg_prefix}-typing"],
       Package["${python_pkg_prefix}-PyYAML"],
       # For Trio, which is a dependency of COBalD
       Package["${python_pkg_prefix}-attrs"],
@@ -369,7 +382,7 @@ class cobald::install {
       Package["${python_pkg_prefix}-requests"],
       Package["${python_pkg_prefix}-urllib3"],
       Package["${python_pkg_prefix}-six"],
-    ],
+    ] + $redhat_7_deps,
   }
   ->python::pip { 'cobald':
     ensure       => present,

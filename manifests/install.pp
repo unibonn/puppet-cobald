@@ -60,7 +60,9 @@ class cobald::install {
 
   if (!defined(Class['python'])) {
     class { 'python':
-      use_epel => false,
+      version  => $python_pkg_prefix,
+      dev      => 'present',
+      use_epel => true,
     }
   }
 
@@ -73,9 +75,6 @@ class cobald::install {
   ensure_packages(
     [
       # Needed base dependencies from EPEL.
-      $python_pkg_prefix,
-      "${python_pkg_prefix}-devel",
-      "${python_pkg_prefix}-pip",
       "${python_pkg_prefix}-libs",
       "${python_pkg_prefix}-setuptools",
       # These can be used from system instead of being installed by PIP.
@@ -350,8 +349,8 @@ class cobald::install {
     group      => 'root',
     systempkgs => true,
     require    => [
-      Package["${python_pkg_prefix}-devel"],
-      Package["${python_pkg_prefix}-pip"],
+      Package['python-dev'],
+      Package['pip'],
       Package["${python_pkg_prefix}-libs"],
       Package["${python_pkg_prefix}-setuptools"],
       # For COBalD
@@ -375,7 +374,6 @@ class cobald::install {
   ->python::pip { 'cobald':
     ensure       => present,
     pkgname      => $pip_cobald,
-    pip_provider => 'pip3',
     virtualenv   => $::cobald::params::virtualenv,
     url          => $cobald_url,
     owner        => 'root',
@@ -385,7 +383,6 @@ class cobald::install {
   ->python::pip { 'cobald-tardis':
     ensure       => present,
     pkgname      => $pip_tardis,
-    pip_provider => 'pip3',
     virtualenv   => $::cobald::params::virtualenv,
     url          => $tardis_url,
     owner        => 'root',

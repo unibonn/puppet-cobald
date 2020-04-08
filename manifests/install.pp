@@ -68,6 +68,9 @@ class cobald::install {
 
   ensure_packages(
     [
+      # Require sqlite tools to allow debugging the drone registry.
+      'sqlite',
+      # Require EPEL for dependencies.
       'epel-release',
     ]
   )

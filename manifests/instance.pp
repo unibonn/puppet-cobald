@@ -15,6 +15,7 @@
 #
 define cobald::instance(
   Enum['present', 'absent']   $ensure                      = 'present',
+  Boolean                     $activate_service            = true,
   Hash                        $cobald_conf                 = undef,
   Hash                        $tardis_conf                 = undef,
   Array[String]               $supported_vos               = [],         # only needed for HTCondor LBS with local submission
@@ -126,7 +127,8 @@ define cobald::instance(
   }
 
   service { "cobald@${name}":
-    ensure  => 'running',
+    ensure  => bool2str($activate_service, 'running', 'stopped'),
+    enable  => $activate_service,
     # Makes use of the VirtualEnv, runs as user cobald
     require => [
       User['cobald'],

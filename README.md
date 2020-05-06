@@ -231,6 +231,7 @@ $mytier3_tardis_conf = {
 
 cobald::instance { 'mytier3':
   ensure                      => 'present',
+  activate_service            => true,
   cobald_conf                 => $mytier3_cobald_conf,
   tardis_conf                 => $mytier3_tardis_conf,
   supported_vos               => ['atlas', 'belle'],

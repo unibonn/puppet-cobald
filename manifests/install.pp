@@ -34,6 +34,7 @@ class cobald::install {
   $ca_packages                = $cobald::ca_packages
   $filename_cobald_robot_key  = $cobald::filename_cobald_robot_key
   $filename_cobald_robot_cert = $cobald::filename_cobald_robot_cert
+  $zabbix_monitor_robotcert   = $cobald::zabbix_monitor_robotcert
   $gsi_daemon_dns             = $cobald::gsi_daemon_dns
 
   $cobald_url = $cobald_version ? {
@@ -283,6 +284,12 @@ class cobald::install {
       }
       else {
         fail("${module_name}: authentication method ${auth_obs} for overlay batch system used but no robot certificate file specified.")
+      }
+
+      if $zabbix_monitor_robotcert {
+        zabbix::userparameters { 'robotcert.expiration_days':
+          content => "UserParameter=robotcert.expiration_days,echo \$(((\$(date --date=\"\$(openssl x509 -enddate -noout -in /etc/grid-security/robotcert.pem | cut -d= -f 2)\" +%s) - \$(date +%s))/86400))",
+        }
       }
 
       file { '/etc/condor/config.d/86_cobald.config':

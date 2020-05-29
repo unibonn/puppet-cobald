@@ -69,6 +69,9 @@ COBalD robot key file name (if OBS uses GSI authentication).
 ##### `filename_cobald_robot_cert` [`String`]
 COBalD robot certificate file name (if OBS uses GSI authentication).
 
+##### `zabbix_monitor_robotcert` [`Boolean`]
+Add a Zabbix parameter (`robotcert.expiration_days`) to monitor the validity of the COBalD robot certificate (if OBS uses GSI authentication). Defaults to `false` to keep Zabbix an optional dependency.
+
 ##### `gsi_daemon_dns` [`Array[String]`]
 Array of distringuished names (DNs) to be added to HTCondor variable `GSI_DAEMON_NAME`.
 

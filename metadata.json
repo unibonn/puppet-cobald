@@ -31,6 +31,10 @@
     {
       "name": "puppet/cron",
       "version_requirement": ">= 2.0.0"
+    },
+    {
+      "name": "puppet/zabbix",
+      "version_requirement": ">= 7.0.0"
     }
   ],
   "data_provider": null

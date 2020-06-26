@@ -75,6 +75,15 @@ Add a Zabbix parameter (`robotcert.expiration_days`) to monitor the validity of 
 ##### `gsi_daemon_dns` [`Array[String]`]
 Array of distringuished names (DNs) to be added to HTCondor variable `GSI_DAEMON_NAME`.
 
+
+### COBalD instance parameters
+
+##### `additional_pilot_attributes` [`Hash[String,String]`]
+Hash of additional ClassAd attributes to add to the pilot JDL. Only useful for the HTCondor LBS.
+Note that the value of the has is passed as-is, i.e. for string values, they need to be enquoted.
+This allows to also pass ClassAd expressions if wanted.
+
+
 ## Usage
 
 Here is an example how to use this module:
@@ -239,7 +248,8 @@ cobald::instance { 'mytier3':
   tardis_conf                 => $mytier3_tardis_conf,
   supported_vos               => ['atlas', 'belle'],
   additional_pilot_attributes => {
-    '+ContainerOS'  => 'CentOS7_pilot',
+    '+ContainerOS'  => '"CentOS7_pilot"',
+    '+CephFS_IO'    => '"none"',
   },
   pilot_logs_keep_time        => '14d',
 }

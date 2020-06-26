@@ -22,7 +22,7 @@ request_memory          = ${Memory}
 request_disk            = ${Disk}
 
 <%- $additional_attributes.each |String $key, String $value| { -%>
-<%= $key %>             = "<%= $value %>"
+<%= $key %>             = <%= $value %>
 <%- } -%>
 
 queue 1

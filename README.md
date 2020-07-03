@@ -182,6 +182,8 @@ $mytier3_tardis_conf = {
       'cpu_ratio'    => 'Real(TotalSlotCpus-Cpus)/TotalSlotCpus',
       # relative used memory
       'memory_ratio' => 'Real(TotalSlotMemory-Memory)/TotalSlotMemory',
+      # average CPU usage, note the comment below!
+      'cpu_usage'    => 'IfThenElse(AverageCPUsUsage=?=undefined, 0, Real(AverageCPUsUsage))',
     },
     'options' => {
       'pool' => 'htcondor.mytier1.edu',
@@ -254,6 +256,16 @@ cobald::instance { 'mytier3':
   pilot_logs_keep_time        => '14d',
 }
 ```
+
+### Special notes on the example
+Please note the the `cpu_usage` ratio specified for the HTCondor example provided above relies on this HTCondor configuration:
+```
+STARTD_PARTITIONABLE_SLOT_ATTRS = $(STARTD_PARTITIONABLE_SLOT_ATTRS), CPUsUsage
+AverageCPUsUsage = Sum(My.ChildCPUsUsage)/Sum(My.ChildCPUs)
+STARTD_ATTRS = $(STARTD_ATTRS), AverageCPUsUsage
+```
+This collects the CPU usage of the partitioned child slots into the `STARTD` so it can be queried directly.
+
 
 ## Limitations
 

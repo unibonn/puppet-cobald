@@ -361,9 +361,6 @@ class cobald::install {
         }
       }
     }
-    default: {
-      fail("${module_name}: authentication method ${auth_obs} for overlay batch system not supported.")
-    }
   }
 
   if $cobald_version == 'master' or $tardis_version == 'master' {

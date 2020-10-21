@@ -28,7 +28,7 @@ class cobald(
   Boolean                    $multiplex_ssh              = true,                         # set up SSH multiplexing for cobald user (reduces latency of SSH logins)
   Boolean                    $ssh_perform_output_cleanup = false,                        # perform cleanup of job output files via SSH to ssh_hostname once per day
   String                     $output_cleanup_pattern     = 'slurm-*.out',                # pattern of files to delete when ssh_perform_output_cleanup is enabled
-  Optional[Enum['gsi']]      $auth_obs                   = 'gsi',                        # authentication used by overlay batch system
+  Optional[Enum['gsi']]      $auth_obs                   = undef,                        # authentication used by overlay batch system
   Boolean                    $manage_cas                 = false,                        # manage CAs (including CRLs)
   String                     $ca_repo_url                = $cobald::params::ca_repo_url, # repository URL from which to fetch CAs
   Array[String]              $ca_packages                = $cobald::params::ca_packages, # array containing names of CA packages

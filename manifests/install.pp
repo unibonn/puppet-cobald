@@ -36,6 +36,8 @@ class cobald::install {
   $filename_cobald_robot_cert = $cobald::filename_cobald_robot_cert
   $zabbix_monitor_robotcert   = $cobald::zabbix_monitor_robotcert
   $gsi_daemon_dns             = $cobald::gsi_daemon_dns
+  $uid                        = $cobald::uid
+  $gid                        = $cobald::gid
 
   $cobald_url = $cobald_version ? {
     'master' => $::cobald::params::cobald_url, # use Github master branch
@@ -426,7 +428,10 @@ class cobald::install {
   }
 
   # Handle cobald user/group
-  class { 'cobald::user': }
+  class { 'cobald::user': 
+    uid => $uid,
+    gid => $gid,
+  }
 
   # Ensure directory for drone registry exists.
   # This is also used as cobald home directory.

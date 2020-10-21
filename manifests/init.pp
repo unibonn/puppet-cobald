@@ -36,6 +36,8 @@ class cobald(
   String                     $filename_cobald_robot_cert = undef,                        # cobald robot certificate file name (if OBS uses GSI authentication)
   Boolean                    $zabbix_monitor_robotcert   = false,                        # monitor validity of robot certificate via Zabbix
   Array[String]              $gsi_daemon_dns             = [],                           # distringuished names to be added to HTCondor variable GSI_DAEMON_NAME
+  Integer                    $uid                        = 509,                          # user id of cobald user
+  Integer                    $gid                        = 509,                          # group id of cobald user
 ) inherits cobald::params {
 
   Class { 'cobald::install': }

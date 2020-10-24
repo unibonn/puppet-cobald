@@ -319,6 +319,13 @@ class cobald::install {
         }
       }
 
+      exec { 'create random data for voms-proxy-init':
+        command => '/usr/bin/dd if=/dev/urandom of=/var/lib/cobald/.rnd bs=256 count=1',
+        user    => 'cobald',
+        require => File['/var/lib/cobald'],
+        creates => '/var/lib/cobald/.rnd',
+      }
+
       # Hourly refresh of proxy with a lifetime of 3 days
       # (make sure that starting jobs always have sufficient proxy lifetime)
       cron::hourly { 'cobald_refreshproxy':
@@ -329,6 +336,7 @@ class cobald::install {
           Package['voms-clients-cpp'],
           Class['fetchcrl'],
           File['/var/cache/cobald'],
+          Exec['create random data for voms-proxy-init'],
           Node_Encrypt::File['/etc/grid-security/robotcert.pem'],
           Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
           User['cobald'],

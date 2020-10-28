@@ -15,9 +15,13 @@
 # Copyright 2019 University of Bonn
 #
 class cobald(
-  String                     $cobald_version             = undef,                        # cobald version to be used (undef = latest PyPI release, 'master' = Github master branch or PyPI release number)
-  String                     $tardis_version             = undef,                        # tardis version to be used (undef = latest PyPI release, 'master' = Github master branch or PyPI release number)
+  Optional[String]           $cobald_version             = undef,                        # cobald version to be used (indicates the PyPI version or the git branch, depending on the choice of cobald_repo_type. If undef, it will either be the latest PyPI release or 'master')
+  Optional[String]           $tardis_version             = undef,                        # tardis version to be used (indicates the PyPI version or the git branch, depending on the choice of tardis_repo_type. If undef, it will either be the latest PyPI release or 'master')
+  Enum['pypi', 'git']        $cobald_repo_type           = 'pypi',                       # cobald repository type (PyPI or git)
+  Enum['pypi', 'git']        $tardis_repo_type           = 'pypi',                       # tardis repository type (PyPI or git)
   Array[Enum['krb5', 'ssh']] $auth_lbs                   = ['krb5'],                     # authentication used to access local batch system
+  Optional[String]           $cobald_repo_url            = undef,                        # cobald git/pypi URL
+  Optional[String]           $tardis_repo_url            = undef,                        # tardis git/pypi URL
   Optional[String]           $filename_cobald_keytab     = undef,                        # cobald service principal keytab file name (if LBS uses Kerberos authentication)
   Optional[String]           $ssh_hostname               = undef,                        # hostname of host to access LBS (if ssh authentication is used to access LBS)
   Optional[String]           $ssh_username               = undef,                        # user name to be used for ssh access to LBS (if ssh authentication is used to access LBS)

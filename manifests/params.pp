@@ -28,6 +28,7 @@ class cobald::params(
 
   $cobald_url  = 'git+https://github.com/MatterMiners/cobald'
   $tardis_url  = 'git+https://github.com/MatterMiners/tardis'
+  $pypi_url    = 'https://pypi.org/simple'
 
   $virtualenv  = '/opt/cobald'
 

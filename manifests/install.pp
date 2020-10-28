@@ -17,6 +17,10 @@ class cobald::install {
 
   $cobald_version             = $cobald::cobald_version
   $tardis_version             = $cobald::tardis_version
+  $cobald_repo_type           = $cobald::cobald_repo_type
+  $tardis_repo_type           = $cobald::tardis_repo_type
+  $cobald_repo_url            = $cobald::cobald_repo_url
+  $tardis_repo_url            = $cobald::tardis_repo_url
   $auth_lbs                   = $cobald::auth_lbs
   $filename_cobald_keytab     = $cobald::filename_cobald_keytab
   $ssh_hostname               = $cobald::ssh_hostname
@@ -39,24 +43,48 @@ class cobald::install {
   $uid                        = $cobald::uid
   $gid                        = $cobald::gid
 
-  $cobald_url = $cobald_version ? {
-    'master' => $::cobald::params::cobald_url, # use Github master branch
-    default  => false,                         # use PyPI
+  $cobald_url = $cobald_repo_type ? {
+    'git' => $cobald_repo_url ? { # use Github
+      undef => $cobald::params::cobald_url,
+      default => $cobald_version ? {
+        undef => "${cobald_repo_url}@master",
+        default => "${cobald_repo_url}@${cobald_version}",
+      },
+    },
+    'pypi'  => $cobald_repo_url ? { # use PyPI
+      undef => $cobald::params::pypi_url,
+      default => $cobald_repo_url
+    },
   }
-  $tardis_url = $tardis_version ? {
-    'master' => $::cobald::params::tardis_url, # use Gibhub master branch
-    default  => false,                         # use PyPI
+  $tardis_url = $tardis_repo_type ? {
+    'git' => $tardis_repo_url ? { # use Github
+      undef => $cobald::params::tardis_url,
+      default => $tardis_version ? {
+        undef => "${tardis_repo_url}@master",
+        default => "${tardis_repo_url}@${tardis_version}",
+      },
+    },
+    'pypi'  => $tardis_repo_url ? { # use PyPI
+      undef => $cobald::params::pypi_url,
+      default => $tardis_repo_url
+    },
   }
 
-  $pip_cobald = $cobald_version ? {
-    undef    => 'cobald',
-    'master' => 'cobald',
-    default  => "cobald==${cobald_version}",
+  if $cobald_repo_type == 'pypi' {
+    $pip_cobald = $cobald_version ? {
+      undef    => 'cobald',
+      default  => "cobald==${cobald_version}",
+    }
+  } else {
+    $pip_cobald = 'cobald'
   }
-  $pip_tardis = $tardis_version ? {
-    undef    => 'cobald-tardis',
-    'master' => 'cobald-tardis',
-    default  => "cobald-tardis==${tardis_version}",
+  if $tardis_repo_type == 'pypi' {
+    $pip_tardis = $tardis_version ? {
+      undef    => 'cobald-tardis',
+      default  => "cobald-tardis==${tardis_version}",
+    }
+  } else {
+    $pip_tardis = 'cobald-tardis'
   }
 
   $python_pkg_prefix = $::cobald::params::python_pkg_prefix
@@ -373,8 +401,8 @@ class cobald::install {
     }
   }
 
-  if $cobald_version == 'master' or $tardis_version == 'master' {
-    # getting the master branch from git requires git
+  if $cobald_repo_type == 'git' or $tardis_repo_type == 'git' {
+    # pulling from git requires git
     ensure_packages(
       [
         'git',
@@ -417,19 +445,25 @@ class cobald::install {
     ensure       => present,
     pkgname      => $pip_cobald,
     virtualenv   => $::cobald::params::virtualenv,
-    url          => $cobald_url,
     owner        => 'root',
     timeout      => 1800,
     require      => $piprequire,
+    *            => $cobald_repo_type ? {
+      'git' => { "url" => $cobald_url },
+      'pypi' => { "index" => $cobald_url },
+    },
   }
   ->python::pip { 'cobald-tardis':
     ensure       => present,
     pkgname      => $pip_tardis,
     virtualenv   => $::cobald::params::virtualenv,
-    url          => $tardis_url,
     owner        => 'root',
     timeout      => 1800,
     require      => $piprequire,
+    *            => $tardis_repo_type ? {
+      'git' => { "url" => $tardis_url },
+      'pypi' => { "index" => $tardis_url },
+    },
   }
 
   # Handle cobald user/group

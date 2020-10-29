@@ -18,13 +18,13 @@ class cobald(
   String                     $cobald_version             = undef,                        # cobald version to be used (undef = latest PyPI release, 'master' = Github master branch or PyPI release number)
   String                     $tardis_version             = undef,                        # tardis version to be used (undef = latest PyPI release, 'master' = Github master branch or PyPI release number)
   Array[Enum['krb5', 'ssh']] $auth_lbs                   = ['krb5'],                     # authentication used to access local batch system
-  String                     $filename_cobald_keytab     = undef,                        # cobald service principal keytab file name (if LBS uses Kerberos authentication)
-  String                     $ssh_hostname               = undef,                        # hostname of host to access LBS (if ssh authentication is used to access LBS)
-  String                     $ssh_username               = undef,                        # user name to be used for ssh access to LBS (if ssh authentication is used to access LBS)
-  String                     $ssh_pubhostkey             = undef,                        # public ssh host key (if ssh authentication is used to access LBS)
-  String                     $ssh_hostkeytype            = undef,                        # encryption type of ssh host key (if ssh authentication is used to access LBS)
-  String                     $ssh_privkey_filename       = undef,                        # file name of ssh private key used to access LBS (if ssh authentication is used to access LBS)
-  Enum['dsa', 'ecdsa', 'ed25519', 'rsa'] $ssh_keytype    = undef,                        # type of ssh key used to access LBS (if ssh authentication is used to access LBS)
+  Optional[String]           $filename_cobald_keytab     = undef,                        # cobald service principal keytab file name (if LBS uses Kerberos authentication)
+  Optional[String]           $ssh_hostname               = undef,                        # hostname of host to access LBS (if ssh authentication is used to access LBS)
+  Optional[String]           $ssh_username               = undef,                        # user name to be used for ssh access to LBS (if ssh authentication is used to access LBS)
+  Optional[String]           $ssh_pubhostkey             = undef,                        # public ssh host key (if ssh authentication is used to access LBS)
+  Optional[String]           $ssh_hostkeytype            = undef,                        # encryption type of ssh host key (if ssh authentication is used to access LBS)
+  Optional[String]           $ssh_privkey_filename       = undef,                        # file name of ssh private key used to access LBS (if ssh authentication is used to access LBS)
+  Optional[Enum['dsa', 'ecdsa', 'ed25519', 'rsa']] $ssh_keytype    = undef,              # type of ssh key used to access LBS (if ssh authentication is used to access LBS)
   Boolean                    $multiplex_ssh              = true,                         # set up SSH multiplexing for cobald user (reduces latency of SSH logins)
   Boolean                    $ssh_perform_output_cleanup = false,                        # perform cleanup of job output files via SSH to ssh_hostname once per day
   String                     $output_cleanup_pattern     = 'slurm-*.out',                # pattern of files to delete when ssh_perform_output_cleanup is enabled

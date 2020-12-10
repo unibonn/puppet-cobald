@@ -183,6 +183,7 @@ class cobald::install {
             Systemd::Unit_file['k5start.service'],
             Package['kstart'],
             File['/var/run/cobald'],
+            Node_Encrypt::File['/etc/condor/cobald.keytab'],
           ],
         }
         if $filename_cobald_keytab != undef {

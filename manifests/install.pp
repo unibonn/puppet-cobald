@@ -355,27 +355,53 @@ class cobald::install {
         creates => '/var/lib/cobald/.rnd',
       }
 
-      # Hourly refresh of proxy with a lifetime of 3 days
-      # (make sure that starting jobs always have sufficient proxy lifetime)
-      cron::hourly { 'cobald_refreshproxy':
-        command => '/usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours 72 -out /var/cache/cobald/proxy',
+      # Hourly check of proxy, created with a lifetime of 3 days, prolonged if lifetime smaller than 24 hours
+      # (make sure that starting jobs always have sufficient proxy lifetime).
+      # Note HTCondor transfers the proxy into the job on change, for other batchsystems, "cobald_transferproxy" cron can be used.
+      # For this, proxy is copied to /var/run/condor as root on success to inherit matching SELinux context.
+      $_proxy_renewal_config = {
+        command => '/usr/bin/voms-proxy-info -file /var/cache/cobald/proxy -exist -valid 24:0 2> /dev/null || ( /usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours 72 -out /var/cache/cobald/proxy_new && cp /var/cache/cobald/proxy_new /var/cache/cobald/proxy )',
         user    => 'cobald',
-        minute  => 0,
         require => [
-          Package['voms-clients-cpp'],
-          Class['fetchcrl'],
-          File['/var/cache/cobald'],
-          Exec['create random data for voms-proxy-init'],
-          Node_Encrypt::File['/etc/grid-security/robotcert.pem'],
-          Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
-          User['cobald'],
-        ],
+                     Package['voms-clients-cpp'],
+                     Class['fetchcrl'],
+                     File['/var/cache/cobald'],
+                     Exec['create random data for voms-proxy-init'],
+                     Node_Encrypt::File['/etc/grid-security/robotcert.pem'],
+                     Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
+                     User['cobald'],
+                ],
+      }
+      cron::hourly { 'cobald_refreshproxy':
+        *       => $_proxy_renewal_config,
+        minute  => 0,
+      }
+      cron::job { 'cobald_refreshproxy_on_reboot':
+        *       => $_proxy_renewal_config,
+        special => 'reboot',
       }
       # Ensure cron has run once.
       exec { 'cobald_refreshproxy_once':
-        command => Cron::Hourly['cobald_refreshproxy']['command'],
-        user    => Cron::Hourly['cobald_refreshproxy']['user'],
+        *       => $_proxy_renewal_config,
         creates => '/var/cache/cobald/proxy',
+      }
+      # Copy the proxy for condor.
+      # Note: Needs to be readable by COBalD user on submission, needs to have mode 600 to be accepted by HTCondor,
+      #       and have correct inherited condor_var_run_t context for SELinux on prolongation.
+      $_condorproxy_copy_command = 'cp -u --preserve=timestamps /var/cache/cobald/proxy /var/run/condor/proxy && chown cobald.root /var/run/condor/proxy'
+      cron::hourly { 'cobald_copycondorproxy':
+        command => $_condorproxy_copy_command,
+        minute  => 10,
+        require => Exec['cobald_refreshproxy_once'],
+      }
+      cron::job { 'cobald_copycondorproxy_on_reboot':
+        command => "sleep 60 && ${_condorproxy_copy_command}",
+        special => 'reboot',
+      }
+      exec { 'cobald_copycondorproxy_once':
+        command => $_condorproxy_copy_command,
+        creates => '/var/run/condor/proxy',
+        require => Exec['cobald_refreshproxy_once'],
       }
       if member($auth_lbs, 'ssh') {
 	ensure_packages(

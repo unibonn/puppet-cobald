@@ -13,7 +13,7 @@ log                     = /var/log/cobald/<%= $instance_name %>/pilots/$$(cluste
 JobBatchName            = <%= $vo %>-drone
 
 accounting_group        = <%= $vo %>
-x509userproxy           = /var/cache/cobald/proxy
+x509userproxy           = /var/run/condor/proxy
 
 environment             = ${Environment}
 

@@ -214,6 +214,7 @@ class cobald::install {
           selrole  => 'object_r',
           seltype  => 'ssh_home_t',
           selrange => 's0',
+          require  => File['/var/lib/cobald'],
         }
         file { '/var/lib/cobald/.ssh/known_hosts':
           ensure   => 'file',
@@ -224,6 +225,7 @@ class cobald::install {
           selrole  => 'object_r',
           seltype  => 'ssh_home_t',
           selrange => 's0',
+          require  => File['/var/lib/cobald/.ssh'],
         }
         sshkey { $ssh_hostname:
           key      => $ssh_pubhostkey,

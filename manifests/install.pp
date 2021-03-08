@@ -29,7 +29,6 @@ class cobald::install {
   $ssh_hostkeytype            = $cobald::ssh_hostkeytype
   $ssh_privkey_filename       = $cobald::ssh_privkey_filename
   $ssh_keytype                = $cobald::ssh_keytype
-  $multiplex_ssh              = $cobald::multiplex_ssh
   $ssh_perform_output_cleanup = $cobald::ssh_perform_output_cleanup
   $output_cleanup_pattern     = $cobald::output_cleanup_pattern
   $auth_obs                   = $cobald::auth_obs
@@ -215,7 +214,6 @@ class cobald::install {
           selrole  => 'object_r',
           seltype  => 'ssh_home_t',
           selrange => 's0',
-          require  => File['/var/lib/cobald'],
         }
         file { '/var/lib/cobald/.ssh/known_hosts':
           ensure   => 'file',
@@ -226,7 +224,6 @@ class cobald::install {
           selrole  => 'object_r',
           seltype  => 'ssh_home_t',
           selrange => 's0',
-          require  => File['/var/lib/cobald/.ssh'],
         }
         sshkey { $ssh_hostname:
           key      => $ssh_pubhostkey,
@@ -244,21 +241,6 @@ class cobald::install {
           selrange => 's0',
           content  => file($ssh_privkey_filename),
           require  => File['/var/lib/cobald/.ssh'],
-        }
-        if $multiplex_ssh {
-          ssh::client::config::user { 'cobald':
-            ensure  => present,
-            target  => '/var/lib/cobald/.ssh/config',
-            require => File['/var/lib/cobald/.ssh/known_hosts'],
-            options => {
-              "Host ${ssh_hostname}" => {
-                'ControlPath'         => '~/.ssh/master-%r@%h:%p',
-                'ControlMaster'       => 'auto',
-                'ControlPersist'      => '60',
-                'ServerAliveInterval' => '30',
-              }
-            }
-          }
         }
         cron::daily { 'cobald_cleanup_job_output_via_ssh':
           ensure  => bool2str($ssh_perform_output_cleanup, 'present', 'absent'),

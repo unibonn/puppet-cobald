@@ -42,9 +42,6 @@ file name of ssh private key used to access LBS (if ssh authentication is used t
 ##### `ssh_keytype` [`Enum['dsa', 'ecdsa', 'ed25519', 'rsa']`]
 type of ssh key used to access LBS (if ssh authentication is used to access LBS)
 
-##### `multiplex_ssh` [`Boolean`]
-Whether SSH multiplexing should be set up for the `cobald` user to reduce latency and improve reliability.
-
 ##### `ssh_perform_output_cleanup` [`Boolean`]
 Whether to perform cleanup of job output files via SSH to ssh_hostname once per day.
 

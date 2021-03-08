@@ -29,7 +29,6 @@ class cobald(
   Optional[String]           $ssh_hostkeytype            = undef,                        # encryption type of ssh host key (if ssh authentication is used to access LBS)
   Optional[String]           $ssh_privkey_filename       = undef,                        # file name of ssh private key used to access LBS (if ssh authentication is used to access LBS)
   Optional[Enum['dsa', 'ecdsa', 'ed25519', 'rsa']] $ssh_keytype    = undef,              # type of ssh key used to access LBS (if ssh authentication is used to access LBS)
-  Boolean                    $multiplex_ssh              = true,                         # set up SSH multiplexing for cobald user (reduces latency of SSH logins)
   Boolean                    $ssh_perform_output_cleanup = false,                        # perform cleanup of job output files via SSH to ssh_hostname once per day
   String                     $output_cleanup_pattern     = 'slurm-*.out',                # pattern of files to delete when ssh_perform_output_cleanup is enabled
   Optional[Enum['gsi']]      $auth_obs                   = undef,                        # authentication used by overlay batch system

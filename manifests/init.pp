@@ -12,7 +12,7 @@
 # Copyright
 # ---------
 #
-# Copyright 2019 University of Bonn
+# Copyright 2019-2021 University of Bonn
 #
 class cobald(
   Optional[String]           $cobald_version             = undef,                        # cobald version to be used (indicates the PyPI version or the git branch, depending on the choice of cobald_repo_type. If undef, it will either be the latest PyPI release or 'master')

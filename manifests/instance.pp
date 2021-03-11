@@ -11,7 +11,7 @@
 # Copyright
 # ---------
 #
-# Copyright 2019 University of Bonn
+# Copyright 2019-2020 University of Bonn
 #
 define cobald::instance(
   Enum['present', 'absent']   $ensure                      = 'present',

@@ -9,7 +9,7 @@
   "issues_url": "https://github.com/unibonn/puppet-cobald/issues",
   "dependencies": [
     {
-      "name": "voxpopuli/python",
+      "name": "puppet/python",
       "version_requirement": ">= 1.0.0"
     },
     {

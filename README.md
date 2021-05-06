@@ -66,6 +66,12 @@ COBalD robot key file name (if OBS uses GSI authentication).
 ##### `filename_cobald_robot_cert` [`String`]
 COBalD robot certificate file name (if OBS uses GSI authentication).
 
+##### `proxy_min_lifetime_hours` [`Integer`]
+Minimum lifetime (hours) of proxy certificate created from COBalD robot (if OBS uses GSI authentication).
+
+##### `proxy_max_lifetime_hours` [`Integer`]
+Maximum lifetime (hours) of proxy certificate created from COBalD robot (if OBS uses GSI authentication).
+
 ##### `zabbix_monitor_robotcert` [`Boolean`]
 Add a Zabbix parameter (`robotcert.expiration_days`) to monitor the validity of the COBalD robot certificate (if OBS uses GSI authentication). Defaults to `false` to keep Zabbix an optional dependency.
 

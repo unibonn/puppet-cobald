@@ -37,6 +37,8 @@ class cobald::install {
   $ca_packages                = $cobald::ca_packages
   $filename_cobald_robot_key  = $cobald::filename_cobald_robot_key
   $filename_cobald_robot_cert = $cobald::filename_cobald_robot_cert
+  $proxy_min_lifetime_hours   = $cobald::proxy_min_lifetime_hours
+  $proxy_max_lifetime_hours   = $cobald::proxy_max_lifetime_hours
   $zabbix_monitor_robotcert   = $cobald::zabbix_monitor_robotcert
   $gsi_daemon_dns             = $cobald::gsi_daemon_dns
   $uid                        = $cobald::uid
@@ -339,12 +341,12 @@ class cobald::install {
         creates => '/var/lib/cobald/.rnd',
       }
 
-      # Hourly check of proxy, created with a lifetime of 3 days, prolonged if lifetime smaller than 24 hours
+      # Hourly check of proxy, created with a lifetime of proxy_max_lifetime_hours, prolonged if lifetime smaller than proxy_min_lifetime_hours
       # (make sure that starting jobs always have sufficient proxy lifetime).
       # Note HTCondor transfers the proxy into the job on change, for other batchsystems, "cobald_transferproxy" cron can be used.
       # For this, proxy is copied to /var/run/condor as root on success to inherit matching SELinux context.
       $_proxy_renewal_config = {
-        command => '/usr/bin/voms-proxy-info -file /var/cache/cobald/proxy -exist -valid 24:0 2> /dev/null || ( /usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours 72 -out /var/cache/cobald/proxy_new && cp /var/cache/cobald/proxy_new /var/cache/cobald/proxy )',
+        command => "/usr/bin/voms-proxy-info -file /var/cache/cobald/proxy -exist -valid ${proxy_min_lifetime_hours}:0 2> /dev/null || ( /usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours ${proxy_max_lifetime_hours} -out /var/cache/cobald/proxy_new && cp /var/cache/cobald/proxy_new /var/cache/cobald/proxy )",
         user    => 'cobald',
         require => [
                      Package['voms-clients-cpp'],

@@ -37,6 +37,8 @@ class cobald(
   Array[String]              $ca_packages                = $cobald::params::ca_packages, # array containing names of CA packages
   String                     $filename_cobald_robot_key  = undef,                        # cobald robot key file name (if OBS uses GSI authentication)
   String                     $filename_cobald_robot_cert = undef,                        # cobald robot certificate file name (if OBS uses GSI authentication)
+  Integer[1,168]             $proxy_min_lifetime_hours   = 24,                           # minimum lifetime (hours) of proxy certificate created from cobald robot (if OBS uses GSI authentication)
+  Integer[2,168]             $proxy_max_lifetime_hours   = 72,                           # maximum lifetime (hours) of proxy certificate created from cobald robot (if OBS uses GSI authentication)
   Boolean                    $zabbix_monitor_robotcert   = false,                        # monitor validity of robot certificate via Zabbix
   Array[String]              $gsi_daemon_dns             = [],                           # distringuished names to be added to HTCondor variable GSI_DAEMON_NAME
   Integer                    $uid                        = 509,                          # user id of cobald user

@@ -19,7 +19,7 @@ class cobald::params(
   if (($facts['os']['name'] == 'CentOS' or $facts['os']['name'] == 'Scientific') and $facts['os']['release']['major'] == '7') {
     $python_pkg_prefix = 'python36'
   }
-  elsif ($facts['os']['name'] == 'CentOS' and $facts['os']['release']['major'] == '8') {
+  elsif (($facts['os']['name'] == 'CentOS' or $facts['os']['name'] == 'Rocky') and $facts['os']['release']['major'] == '8') {
     $python_pkg_prefix = 'python3'
   }
   else {

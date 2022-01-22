@@ -230,10 +230,10 @@ class cobald::install {
           require  => File['/var/lib/cobald/.ssh'],
         }
         sshkey { $ssh_hostname:
-          key      => $ssh_pubhostkey,
-          target   => '/var/lib/cobald/.ssh/known_hosts',
-          type     => $ssh_hostkeytype,
-          require  => File['/var/lib/cobald/.ssh'],
+          key     => $ssh_pubhostkey,
+          target  => '/var/lib/cobald/.ssh/known_hosts',
+          type    => $ssh_hostkeytype,
+          require => File['/var/lib/cobald/.ssh'],
         }
         node_encrypt::file { "/var/lib/cobald/.ssh/id_${ssh_keytype}":
           mode     => '0600',
@@ -349,18 +349,18 @@ class cobald::install {
         command => "/usr/bin/voms-proxy-info -file /var/cache/cobald/proxy -exist -valid ${proxy_min_lifetime_hours}:0 2> /dev/null || ( /usr/bin/voms-proxy-init -quiet -cert /etc/grid-security/robotcert.pem -key /etc/grid-security/robotkey.pem -hours ${proxy_max_lifetime_hours} -out /var/cache/cobald/proxy_new && cp /var/cache/cobald/proxy_new /var/cache/cobald/proxy )",
         user    => 'cobald',
         require => [
-                     Package['voms-clients-cpp'],
-                     Class['fetchcrl'],
-                     File['/var/cache/cobald'],
-                     Exec['create random data for voms-proxy-init'],
-                     Node_Encrypt::File['/etc/grid-security/robotcert.pem'],
-                     Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
-                     User['cobald'],
-                ],
+          Package['voms-clients-cpp'],
+          Class['fetchcrl'],
+          File['/var/cache/cobald'],
+          Exec['create random data for voms-proxy-init'],
+          Node_Encrypt::File['/etc/grid-security/robotcert.pem'],
+          Node_Encrypt::File['/etc/grid-security/robotkey.pem'],
+          User['cobald'],
+        ],
       }
       cron::hourly { 'cobald_refreshproxy':
-        *       => $_proxy_renewal_config,
-        minute  => 0,
+        *      => $_proxy_renewal_config,
+        minute => 0,
       }
       cron::job { 'cobald_refreshproxy_on_reboot':
         *       => $_proxy_renewal_config,
@@ -390,7 +390,7 @@ class cobald::install {
         require => Exec['cobald_refreshproxy_once'],
       }
       if member($auth_lbs, 'ssh') {
-	ensure_packages(
+        ensure_packages(
           [
             'openssh-clients',
           ]
@@ -455,32 +455,32 @@ class cobald::install {
     ] + $redhat_7_deps,
   }
   ->python::pip { 'cobald':
-    ensure       => present,
-    pkgname      => $pip_cobald,
-    virtualenv   => $::cobald::params::virtualenv,
-    owner        => 'root',
-    timeout      => 1800,
-    require      => $piprequire,
-    *            => $cobald_repo_type ? {
-      'git' => { "url" => $cobald_url },
-      'pypi' => { "index" => $cobald_url },
+    ensure     => present,
+    pkgname    => $pip_cobald,
+    virtualenv => $::cobald::params::virtualenv,
+    owner      => 'root',
+    timeout    => 1800,
+    require    => $piprequire,
+    *          => $cobald_repo_type ? {
+      'git'  => { 'url' => $cobald_url },
+      'pypi' => { 'index' => $cobald_url },
     },
   }
   ->python::pip { 'cobald-tardis':
-    ensure       => present,
-    pkgname      => $pip_tardis,
-    virtualenv   => $::cobald::params::virtualenv,
-    owner        => 'root',
-    timeout      => 1800,
-    require      => $piprequire,
-    *            => $tardis_repo_type ? {
-      'git' => { "url" => $tardis_url },
-      'pypi' => { "index" => $tardis_url },
+    ensure     => present,
+    pkgname    => $pip_tardis,
+    virtualenv => $::cobald::params::virtualenv,
+    owner      => 'root',
+    timeout    => 1800,
+    require    => $piprequire,
+    *          => $tardis_repo_type ? {
+      'git'  => { 'url' => $tardis_url },
+      'pypi' => { 'index' => $tardis_url },
     },
   }
 
   # Handle cobald user/group
-  class { 'cobald::user': 
+  class { 'cobald::user':
     uid => $uid,
     gid => $gid,
   }

@@ -10,27 +10,27 @@
   "dependencies": [
     {
       "name": "puppet/python",
-      "version_requirement": ">= 1.0.0"
+      "version_requirement": ">= 1.0.0 < 20.0.0"
     },
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 1.0.0"
+      "version_requirement": ">= 1.0.0 < 20.0.0"
     },
     {
       "name": "binford2k/node_encrypt",
-      "version_requirement": ">= 0.4.0"
+      "version_requirement": ">= 0.4.0 < 20.0.0"
     },
     {
       "name": "camptocamp/systemd",
-      "version_requirement": ">= 1.0.0"
+      "version_requirement": ">= 1.0.0 < 20.0.0"
     },
     {
       "name": "puppet/cron",
-      "version_requirement": ">= 2.0.0"
+      "version_requirement": ">= 2.0.0 < 20.0.0"
     },
     {
       "name": "puppet/zabbix",
-      "version_requirement": ">= 7.0.0"
+      "version_requirement": ">= 7.0.0 < 20.0.0"
     }
   ],
   "operatingsystem_support": [

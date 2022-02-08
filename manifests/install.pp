@@ -11,7 +11,7 @@
 # Copyright
 # ---------
 #
-# Copyright 2019-2021 University of Bonn
+# Copyright 2019-2022 University of Bonn
 #
 class cobald::install {
 
